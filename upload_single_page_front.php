@@ -1,29 +1,5 @@
 <?php 
-
-
-
-
-		$url = 'https://www.google.com/recaptcha/api/siteverify';
-
-		//DATA POST
-		$secret = '6LeMMS4UAAAAAKcz__24tNmvDRAofbwjG-D01yNu';
-		$recaptca = $_POST['g-recaptcha-response'];
-		$ip = $_SERVER['REMOTE_ADDR'];
-		$url_data = $url.'?secret='.$secret.'&response='.$recaptca.'&remoteip='.$ip;
-		$rsp = file_get_contents($url_data);
-		$curl = curl_init();
-
-		$res = json_decode($rsp, TRUE); //капча есть
-
-		 //капча есть	
-
-
-
-
-
-if (!empty($_POST['textt'])) { //проверяем если отправил сообщение
-
-	//проверка капчи
+if (isset($_POST['textt'])) { //проверяем если отправил сообщение
 
 
 	function testmessage($ob_desc) { //проверка на стоп-слова
@@ -53,12 +29,14 @@ if (!empty($_POST['textt'])) { //проверяем если отправил с
 	$textt = $_POST['textt']; // Записываем в переменную текст
 	$yearss = $_POST['yearss']; // кладем в переменную значение поля "возраст"
 
-	if (($result <> '') && ($res['success'] == true)) { // если значение поля "Имя" не пустое
-		if (testmessage($textt) == 'true' && (strlen($textt) > 500 && strlen($textt) < 2000 )) { // если проверка выдала "ПРАВДА!", то есть стоп слов нет
+	if ($result <> '')  { // если значение поля "Имя" не пустое
+		if (testmessage($textt) == 'true') { // если проверка выдала "ПРАВДА!", то есть стоп слов нет
 			$status_msg = 'publish'; // статус "опубликовано"
 		} else {
 			$status_msg = 'pending'; // статус "на утверждение"
 		}
+
+
 		
 		 // Создаем массив
 		$post_data = array(
@@ -75,11 +53,8 @@ if (!empty($_POST['textt'])) { //проверяем если отправил с
 		//echo "<script language=\"JavaScript\">alert('Вы не ввели Ваше имя. Представьтесь пожалуйста.');</script>";
 		header ('Location: '.$_SERVER['REQUEST_URI']);
 		exit();
-	} elseif (($result <> '') && ($res['success'] != true)) {
-		echo "<script language=\"JavaScript\">alert('Подтвердите, что вы не робот');</script>";
-	}	else { // если значение "имя" пустое
-		echo "<script language=\"JavaScript\">alert('Вы не ввели Ваше имя. Представьтесь пожалуйста.');</script>";
-		//header ('Location: '.$_SERVER['REQUEST_URI']);
+	} else { // если значение "имя" пустое
+			echo "<script language=\"JavaScript\">alert('Вы не ввели Ваше имя. Представьтесь пожалуйста.');</script>";
 	}
-}
+} 
 ?>
